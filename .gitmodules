@@ -1,0 +1,3 @@
+[submodule "Libraries/ISTextView"]
+	path = Libraries/ISTextView
+	url = git@github.com:ishkawa/ISTextView.git
