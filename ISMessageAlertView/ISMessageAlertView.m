@@ -1,7 +1,7 @@
 #import "ISMessageAlertView.h"
-#import "ISTextView.h"
+#import <QuartzCore/QuartzCore.h>
 
-@interface ISMessageAlertView ()
+@interface ISMessageAlertView () 
 
 @property (assign, nonatomic) id <UIAlertViewDelegate> escapedDelegate;
 
@@ -72,8 +72,11 @@
     }
     
     CGFloat margin = 15.f;
-    self.textView = [[[ISTextView alloc] init] autorelease];
+    self.textView = [[[UITextView alloc] init] autorelease];
     self.textView.font = [UIFont systemFontOfSize:15];
+    self.textView.layer.cornerRadius = 6.f;
+    self.textView.contentInset = UIEdgeInsetsMake(-.8f, -.8f, -.8f, -.8f);
+    self.textView.textAlignment = UITextAlignmentLeft;
     self.textView.frame = CGRectMake(margin, label.frame.origin.y+label.frame.size.height+10,
                                      self.frame.size.width-margin*2.f, 55);
     
