@@ -48,6 +48,9 @@
     if ([self respondsToSelector:@selector(alertViewStyle)]) {
         self.alertViewStyle = UIAlertViewStyleDefault;
     }
+    if ([[[UIDevice currentDevice] systemVersion] hasPrefix:@"4."]) {
+        self.message = @"\n\n\n\n";
+    }
     self.escapedDelegate = self.delegate;
     self.delegate = self;
 
@@ -61,29 +64,38 @@
 
 - (void)willPresentAlertView:(UIAlertView *)alertView
 {
-    for (UIView *subview in [self subviews]) {
-        if ([subview isKindOfClass:[UIButton class]]) {
-            subview.autoresizingMask |= UIViewAutoresizingFlexibleTopMargin;
-        }
-    }
-    UILabel *label = [self valueForKey:@"_bodyTextLabel"];
-    if (!label) {
-        label = [self valueForKey:@"_titleLabel"];
-    }
-    
     CGFloat margin = 15.f;
+    
     self.textView = [[[UITextView alloc] init] autorelease];
     self.textView.font = [UIFont systemFontOfSize:15];
     self.textView.layer.cornerRadius = 6.f;
     self.textView.contentInset = UIEdgeInsetsMake(-.8f, -.8f, -.8f, -.8f);
     self.textView.textAlignment = UITextAlignmentLeft;
-    self.textView.frame = CGRectMake(margin, label.frame.origin.y+label.frame.size.height+10,
-                                     self.frame.size.width-margin*2.f, 55);
     
-    [self addSubview:self.textView];
-    
-    CGRect frame = self.frame;
-    self.frame = CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height+60);
+    if ([[[UIDevice currentDevice] systemVersion] hasPrefix:@"4."]) {
+        self.textView.frame = CGRectMake(margin, 55, self.frame.size.width-margin*2.f, 65);
+        [self addSubview:self.textView];
+    } else {
+        for (UIView *subview in [self subviews]) {
+            if ([subview isKindOfClass:[UIButton class]]) {
+                subview.autoresizingMask |= UIViewAutoresizingFlexibleTopMargin;
+            }
+        }
+        UILabel *label = [self valueForKey:@"_bodyTextLabel"];
+        if (!label) {
+            label = [self valueForKey:@"_titleLabel"];
+        }
+        
+        self.textView.frame = CGRectMake(margin,
+                                         label.frame.origin.y+label.frame.size.height+10,
+                                         self.frame.size.width-margin*2.f,
+                                         55);
+        
+        [self addSubview:self.textView];
+        
+        CGRect frame = self.frame;
+        self.frame = CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height+60);
+    }
     [self.textView becomeFirstResponder];
     
     if ([self.escapedDelegate respondsToSelector:@selector(willPresentAlertView:)]) {
